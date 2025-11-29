@@ -50,3 +50,16 @@ ecosystem.config.js
 # --- MAC ---
 *.DS_Store
 
+# --- CREDENCIALES / TOKENS ---
+# Ignorar ficheros de credenciales y tokens que suelen contener secretos
+src/lib/credentials.json
+src/lib/token.json
+src/lib/token*.json
+src/lib/token.json
+src/lib/*.key
+src/lib/*.pem
+src/lib/*.crt
+tokens.json
+tokens/
+.secrets/
+.env.*
