@@ -2,7 +2,7 @@
 import {useEffect, useState} from "react";
 import {toast, Toaster} from "react-hot-toast";
 import {ShadcnButton} from "@/componentes/shadcnButton";
-import {ShadcnInput} from "@/Componentes/shadcnInput";
+import {ShadcnInput} from "@/componentes/shadcnInput";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
 
@@ -13,11 +13,6 @@ export default function PedidosCompra() {
     const API = process.env.NEXT_PUBLIC_API_URL;
 
     const router = useRouter();
-
-    const verDetalle = (id) =>{
-        router.push(`/dashboard/pedidosDetalle?id=${id}`);
-    }
-
 
 
     function formatearFecha(fecha) {
@@ -33,48 +28,52 @@ export default function PedidosCompra() {
         try {
             const res = await fetch(`${API}/pedidos/seleccionarPorComprador`, {
                 method: "POST",
-                headers: {Accept: "application/json",
-                    "Content-Type": "application/json",},
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({nombre_comprador}),
                 cache: "no-cache",
             })
 
             if (!res.ok) {
                 return toast.error('Debe indicar un nombre para realizar el filtro (NO APELLIDO)');
-            }else{
+            } else {
                 const dataFiltradoPorNombre = await res.json();
                 setPedidos(dataFiltradoPorNombre);
                 toast.success(`Se encontraron ${dataFiltradoPorNombre.length} pedido(s)`);
             }
 
-        }catch (error) {
+        } catch (error) {
             console.log(error);
-            return toast.error('Se ha Producido el siguiente error , contacte a soporte de NativeCode: '  + error);
+            return toast.error('Se ha Producido el siguiente error , contacte a soporte de NativeCode: ' + error);
         }
     }
 
 
     async function filtrarPorEstado(estado_pedido) {
         try {
-            if(!estado_pedido){
+            if (!estado_pedido) {
                 return toast.error('Debe seleccionar una categoria para realizar el filtro');
             }
             const res = await fetch(`${API}/pedidos/seleccionarPorEstados`, {
                 method: "POST",
-                headers: {Accept: "application/json",
-                    "Content-Type": "application/json",},
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({estado_pedido}),
                 mode: "cors"
             })
-            if(!res.ok){
-                return toast.error('Se ha Producido el siguiente error , contacte a soporte de NativeCode' );
-            }else {
+            if (!res.ok) {
+                return toast.error('Se ha Producido el siguiente error , contacte a soporte de NativeCode');
+            } else {
                 const dataPedidosFiltrados = await res.json();
                 setPedidos(dataPedidosFiltrados);
             }
-        }catch(error) {
+        } catch (error) {
             console.log(error);
-            return toast.error('Se ha Producido el siguiente error , contacte a soporte de NativeCode: '  + error);
+            return toast.error('Se ha Producido el siguiente error , contacte a soporte de NativeCode: ' + error);
         }
     }
 
@@ -87,24 +86,26 @@ export default function PedidosCompra() {
             });
             if (!resultado.ok) {
                 return toast.error('Ha ocurrido un problema al listar los pedidos contacte a soporte de Medify')
-            }else{
+            } else {
                 const data = await resultado.json();
                 setPedidos(data);
             }
-        }catch (error) {
+        } catch (error) {
             console.log(error);
-            return toast.error('Se ha Producido el siguiente error , contacte a soporte de NativeCode: '  + error);
+            return toast.error('Se ha Producido el siguiente error , contacte a soporte de NativeCode: ' + error);
         }
     }
+
     useEffect(() => {
         listarPedidos();
     }, [])
 
-    return(
+    return (
         <div className="mt-10">
-            <Toaster position="top-center" />
+            <Toaster position="top-center"/>
             <div className="px-4 sm:px-6 lg:px-8">
-                <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-gray-100 bg-gradient-to-r from-indigo-50 via-white to-purple-50 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
+                <div
+                    className="mb-6 flex flex-col gap-4 rounded-2xl border border-gray-100 bg-gradient-to-r from-indigo-50 via-white to-purple-50 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
                     <div className="w-full sm:max-w-xl">
 
                         <h1 className="mt-2 text-2xl font-semibold text-gray-900 sm:text-3xl">
@@ -118,7 +119,8 @@ export default function PedidosCompra() {
                             <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
                                 Buscar estado de pago por nombre
                             </p>
-                            <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 shadow-sm">
+                            <div
+                                className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 shadow-sm">
                                 <ShadcnInput
                                     value={comprador}
                                     onChange={e => setComprador(e.target.value)}
@@ -137,13 +139,17 @@ export default function PedidosCompra() {
                     </div>
 
                     <div className="mt-2 w-full sm:mt-0 sm:w-auto">
-                        <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end sm:gap-3">
-                            <ShadcnButton  funcion={()=> listarPedidos()} nombre={'Total Agendamientos'}></ShadcnButton>
-                            <ShadcnButton  funcion={()=> filtrarPorEstado(1)} nombre={'Pago Realizado'}></ShadcnButton>
-                            <ShadcnButton  funcion={()=> filtrarPorEstado(2)} nombre={'Citas Confirmadas'}></ShadcnButton>
-                            <ShadcnButton  funcion={()=> filtrarPorEstado(3)} nombre={'Citas Completadas'}></ShadcnButton>
-                            <ShadcnButton  funcion={()=> filtrarPorEstado(4)} nombre={'Citas Anuladas'}></ShadcnButton>
-                            <ShadcnButton  funcion={()=> filtrarPorEstado("0")} nombre={'Pendientes Pagos'}></ShadcnButton>
+                        <div
+                            className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end sm:gap-3">
+                            <ShadcnButton funcion={() => listarPedidos()} nombre={'Total Agendamientos'}></ShadcnButton>
+                            <ShadcnButton funcion={() => filtrarPorEstado(1)} nombre={'Pago Realizado'}></ShadcnButton>
+                            <ShadcnButton funcion={() => filtrarPorEstado(2)}
+                                          nombre={'Citas Confirmadas'}></ShadcnButton>
+                            <ShadcnButton funcion={() => filtrarPorEstado(3)}
+                                          nombre={'Citas Completadas'}></ShadcnButton>
+                            <ShadcnButton funcion={() => filtrarPorEstado(4)} nombre={'Citas Anuladas'}></ShadcnButton>
+                            <ShadcnButton funcion={() => filtrarPorEstado("0")}
+                                          nombre={'Pendientes Pagos'}></ShadcnButton>
                         </div>
                     </div>
                 </div>
@@ -213,15 +219,15 @@ export default function PedidosCompra() {
                                          <span className={
 
                                              pedido.estado_pedido === 1 ? "text-blue-600 bg-blue-50 rounded-lg p-2 font-bold w-24 text-center "
-                                                 :pedido.estado_pedido === 2 ? "text-amber-600 bg-yellow-200 rounded-lg p-2 font-bold w-24 text-center"
-                                                     :pedido.estado_pedido === 3 ? "text-green-800  bg-green-200  rounded-lg p-2 font-bold w-24 text-center"
-                                                         :pedido.estado_pedido === 0 ? "text-red-600 bg-red-200 rounded-lg p-2 font-bold w-24 text-center"
+                                                 : pedido.estado_pedido === 2 ? "text-amber-600 bg-yellow-200 rounded-lg p-2 font-bold w-24 text-center"
+                                                     : pedido.estado_pedido === 3 ? "text-green-800  bg-green-200  rounded-lg p-2 font-bold w-24 text-center"
+                                                         : pedido.estado_pedido === 0 ? "text-red-600 bg-red-200 rounded-lg p-2 font-bold w-24 text-center"
 
                                                              : "text-gray-800 bg-gray-200 rounded-lg p-2 font-bold w-24 text-center"}
 
 
                                          >
-                                             {pedido.estado_pedido ===  1 ? "Pago Realizado"
+                                             {pedido.estado_pedido === 1 ? "Pago Realizado"
                                                  : pedido.estado_pedido === 2 ? "Cita Confirmada"
                                                      : pedido.estado_pedido === 3 ? "Cita Completada"
                                                          : pedido.estado_pedido === 0 ? "Pago Pendiente"
